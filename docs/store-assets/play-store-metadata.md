@@ -10,16 +10,18 @@
 
 ## Short description (έως 80 χαρακτήρες)
 
-**Draft:**
-
-```
-A fun Heads Up-style party game. Guess the name on your forehead!
-```
-
-**Εναλλακτικό με περισσότερα keywords:**
+**Επιλεγμένο για το Play Console:**
 
 ```
 Heads Up party game: guess celebrities, characters & myths with friends.
+```
+
+> 74 χαρακτήρες. Περιέχει τα keywords "Heads Up", "party game", "guess", "celebrities", "characters".
+
+**Εναλλακτικό (πιο απλό):**
+
+```
+A fun Heads Up-style party game. Guess the name on your forehead!
 ```
 
 ## Full description
