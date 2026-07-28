@@ -236,7 +236,15 @@ function WhoAmI() {
       )}
 
       {screen === "ready" && (
-        <ReadyScreen t={t} duration={duration} onStart={startRound} onBack={() => setScreen("setup")} />
+        <ReadyScreen
+          t={t}
+          duration={duration}
+          onStart={async () => {
+            await requestPermission();
+            startRound();
+          }}
+          onBack={() => setScreen("setup")}
+        />
       )}
 
       {screen === "playing" && current && (
