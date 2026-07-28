@@ -68,6 +68,10 @@ export const TRANSLATIONS: Record<LangCode, Dict> = {
     playAgain: "Ξανά", changeSettings: "Ρυθμίσεις",
     getReady: "Ετοιμάσου", tapToStart: "Πάτα όταν είναι όλοι έτοιμοι",
     tiltHint: "Κάτω = σωστό · Πάνω = πάσο", tiltDenied: "Χωρίς πρόσβαση κίνησης — χρησιμοποίησε τα κουμπιά", tiltUnsupported: "Χρησιμοποίησε τα κουμπιά", tiltPending: "Χρησιμοποίησε τα κουμπιά ή ενεργοποίησε την κίνηση",
+    tiltMode: "Λειτουργία κλίσης", tiltOn: "Ενεργή", tiltOff: "Ανενεργή",
+    tiltModeExplain: "Ενεργή: η οθόνη κλειδώνει οριζόντια στο μέτωπο. Κλίση κάτω = σωστό, πάνω = πάσο.",
+    noTiltModeExplain: "Ανενεργή: κράτα το κινητό όπως θες. Απάντα με τα κουμπιά της οθόνης.",
+    tiltArming: "Έτοιμοι…",
   },
   fr: {
     catLabel_actors: "Cinéma & TV", catLabel_music: "Musique", catLabel_sports: "Sport", catLabel_science: "Science",
