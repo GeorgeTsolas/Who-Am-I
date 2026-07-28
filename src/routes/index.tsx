@@ -566,7 +566,7 @@ function PlayScreen({
   const warn = !isUnlimited && timeLeft <= 10;
 
   return (
-    <div className="mx-auto flex min-h-dvh max-w-md flex-col px-5 pb-6 pt-6">
+    <div className="mx-auto flex h-full min-h-full max-w-md flex-col px-5 pb-6 pt-6">
       {/* top row */}
       <div className="flex items-center justify-between">
         <div className={`flex items-baseline gap-1.5 ${warn ? "text-destructive" : "text-foreground"}`}>
