@@ -24,7 +24,18 @@ A mobile-first *Heads Up*–style party game. Hold the phone to your forehead, y
 4. Tap **Start**, put the phone on your forehead, and let your friends give you clues.
 5. Tilt down when you guess right, tilt up to skip.
 
+## Screenshots
+
+<p align="center">
+  <img src="docs/screenshots/01-setup.png" alt="Setup screen" width="24%" />
+  <img src="docs/screenshots/02-categories.png" alt="Categories" width="24%" />
+  <img src="docs/screenshots/03-ready.png" alt="Get ready screen with tilt toggle" width="24%" />
+  <img src="docs/screenshots/04-play.png" alt="Gameplay — guessing a name" width="24%" />
+  <img src="docs/screenshots/05-play-2.png" alt="Gameplay — next name" width="24%" />
+</p>
+
 ## Tech stack
+
 
 - [TanStack Start](https://tanstack.com/start) (React 19 + Vite 7)
 - TypeScript
