@@ -543,7 +543,7 @@ function ReadyScreen({
 /* ---------- PLAY ---------- */
 
 function PlayScreen({
-  t, catLabel, current, timeLeft, elapsed, duration, correctCount, onCorrect, onSkip, onEnd,
+  t, catLabel, current, timeLeft, elapsed, duration, correctCount, onCorrect, onSkip, onEnd, tiltState,
 }: {
   t: (k: string) => string;
   catLabel: (k: Category) => string;
@@ -555,6 +555,7 @@ function PlayScreen({
   onCorrect: () => void;
   onSkip: () => void;
   onEnd: () => void;
+  tiltState: "pending" | "granted" | "denied" | "unsupported";
 }) {
   const isUnlimited = duration === NO_LIMIT;
   const meta = CATEGORY_META[current.cat];
