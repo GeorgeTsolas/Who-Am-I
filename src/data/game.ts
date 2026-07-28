@@ -1,0 +1,136 @@
+import type { Category } from "./people";
+
+export type CategoryMeta = {
+  key: Category;
+  emoji: string;
+  color: string; // oklch-safe hex works for inline accents
+};
+
+export const CATEGORY_META: Record<Category, CategoryMeta> = {
+  actors: { key: "actors", emoji: "🎬", color: "#F26C8E" },
+  music: { key: "music", emoji: "🎵", color: "#5CD1EB" },
+  sports: { key: "sports", emoji: "🏆", color: "#F0B94D" },
+  science: { key: "science", emoji: "🔬", color: "#7FE07C" },
+  history: { key: "history", emoji: "🏛️", color: "#C9A6FF" },
+  tech: { key: "tech", emoji: "💼", color: "#69B0FF" },
+  art: { key: "art", emoji: "🎨", color: "#FFA76B" },
+  games: { key: "games", emoji: "🎮", color: "#A8F26E" },
+  fiction: { key: "fiction", emoji: "🎭", color: "#FFD870" },
+  myth: { key: "myth", emoji: "⚡", color: "#9BC0FF" },
+  custom: { key: "custom", emoji: "⭐", color: "#FF8FB8" },
+};
+
+export const LANG_OPTIONS = [
+  { code: "en", flag: "🇬🇧", label: "English" },
+  { code: "el", flag: "🇬🇷", label: "Ελληνικά" },
+  { code: "fr", flag: "🇫🇷", label: "Français" },
+  { code: "es", flag: "🇪🇸", label: "Español" },
+  { code: "it", flag: "🇮🇹", label: "Italiano" },
+  { code: "de", flag: "🇩🇪", label: "Deutsch" },
+  { code: "ru", flag: "🇷🇺", label: "Русский" },
+] as const;
+
+export type LangCode = (typeof LANG_OPTIONS)[number]["code"];
+
+type Dict = Record<string, string>;
+
+export const TRANSLATIONS: Record<LangCode, Dict> = {
+  en: {
+    catLabel_actors: "Film & TV", catLabel_music: "Music", catLabel_sports: "Sports", catLabel_science: "Science",
+    catLabel_history: "History & Politics", catLabel_tech: "Business & Tech", catLabel_art: "Art & Culture",
+    catLabel_games: "Video Games", catLabel_fiction: "Movies & TV Characters", catLabel_myth: "Mythology", catLabel_custom: "Your Names",
+    appTitle: "Who Am I?", subtitle: "World-famous names · Heads Up style",
+    roundDuration: "Round duration", noLimit: "No limit", categories: "Categories", catsHint: "Tap to include or exclude",
+    addNames: "Your own names", customPlaceholder: "e.g. a friend's name", add: "Add",
+    start: "Start round", warnSelect: "Pick a category or add a name",
+    hintPlay: "Hold the phone on your forehead. Your friends give clues — tilt down for correct, up to skip.",
+    sec: "sec", reroll: "Skip", gotIt: "Got it", endRound: "End round",
+    roundOver: "Round over", correctGuesses: "correct", rerolls: "skipped",
+    playAgain: "Play again", changeSettings: "Change settings",
+    getReady: "Get ready", tapToStart: "Tap when everyone's ready",
+  },
+  el: {
+    catLabel_actors: "Ταινίες & TV", catLabel_music: "Μουσική", catLabel_sports: "Αθλητισμός", catLabel_science: "Επιστήμη",
+    catLabel_history: "Ιστορία & Πολιτική", catLabel_tech: "Επιχειρήσεις & Tech", catLabel_art: "Τέχνη & Πολιτισμός",
+    catLabel_games: "Βιντεοπαιχνίδια", catLabel_fiction: "Χαρακτήρες", catLabel_myth: "Μυθολογία", catLabel_custom: "Δικά σου",
+    appTitle: "Ποιος Είμαι;", subtitle: "Διάσημα ονόματα · στυλ Heads Up",
+    roundDuration: "Διάρκεια γύρου", noLimit: "Χωρίς όριο", categories: "Κατηγορίες", catsHint: "Πάτησε για να ενεργοποιήσεις",
+    addNames: "Τα δικά σου ονόματα", customPlaceholder: "π.χ. όνομα φίλου", add: "Προσθήκη",
+    start: "Ξεκίνα", warnSelect: "Διάλεξε κατηγορία ή πρόσθεσε όνομα",
+    hintPlay: "Κράτα το κινητό στο μέτωπο. Οι φίλοι σου δίνουν στοιχεία — γείρε κάτω για σωστό, πάνω για πάσο.",
+    sec: "δευτ", reroll: "Πάσο", gotIt: "Το 'χω", endRound: "Τέλος γύρου",
+    roundOver: "Ο γύρος τελείωσε", correctGuesses: "σωστά", rerolls: "πάσα",
+    playAgain: "Ξανά", changeSettings: "Ρυθμίσεις",
+    getReady: "Ετοιμάσου", tapToStart: "Πάτα όταν είναι όλοι έτοιμοι",
+  },
+  fr: {
+    catLabel_actors: "Cinéma & TV", catLabel_music: "Musique", catLabel_sports: "Sport", catLabel_science: "Science",
+    catLabel_history: "Histoire & Politique", catLabel_tech: "Business & Tech", catLabel_art: "Art & Culture",
+    catLabel_games: "Jeux Vidéo", catLabel_fiction: "Personnages", catLabel_myth: "Mythologie", catLabel_custom: "Vos noms",
+    appTitle: "Qui suis-je ?", subtitle: "Noms célèbres · style Heads Up",
+    roundDuration: "Durée", noLimit: "Sans limite", categories: "Catégories", catsHint: "Touchez pour activer",
+    addNames: "Vos propres noms", customPlaceholder: "ex. le nom d'un ami", add: "Ajouter",
+    start: "Commencer", warnSelect: "Choisissez une catégorie ou ajoutez un nom",
+    hintPlay: "Tenez le téléphone sur votre front. Vos amis donnent des indices.",
+    sec: "sec", reroll: "Passer", gotIt: "Trouvé", endRound: "Terminer",
+    roundOver: "Manche terminée", correctGuesses: "trouvés", rerolls: "passés",
+    playAgain: "Rejouer", changeSettings: "Réglages",
+    getReady: "Prêt ?", tapToStart: "Touchez quand tout le monde est prêt",
+  },
+  es: {
+    catLabel_actors: "Cine y TV", catLabel_music: "Música", catLabel_sports: "Deportes", catLabel_science: "Ciencia",
+    catLabel_history: "Historia y Política", catLabel_tech: "Negocios y Tech", catLabel_art: "Arte y Cultura",
+    catLabel_games: "Videojuegos", catLabel_fiction: "Personajes", catLabel_myth: "Mitología", catLabel_custom: "Tus nombres",
+    appTitle: "¿Quién soy?", subtitle: "Nombres famosos · estilo Heads Up",
+    roundDuration: "Duración", noLimit: "Sin límite", categories: "Categorías", catsHint: "Toca para activar",
+    addNames: "Tus propios nombres", customPlaceholder: "p. ej. un amigo", add: "Añadir",
+    start: "Empezar", warnSelect: "Elige una categoría o añade un nombre",
+    hintPlay: "Sostén el móvil en la frente. Tus amigos dan pistas.",
+    sec: "seg", reroll: "Pasar", gotIt: "¡Listo!", endRound: "Terminar",
+    roundOver: "Ronda terminada", correctGuesses: "correctos", rerolls: "pasados",
+    playAgain: "Jugar de nuevo", changeSettings: "Ajustes",
+    getReady: "¿Listos?", tapToStart: "Toca cuando estén listos",
+  },
+  it: {
+    catLabel_actors: "Film e TV", catLabel_music: "Musica", catLabel_sports: "Sport", catLabel_science: "Scienza",
+    catLabel_history: "Storia e Politica", catLabel_tech: "Business e Tech", catLabel_art: "Arte e Cultura",
+    catLabel_games: "Videogiochi", catLabel_fiction: "Personaggi", catLabel_myth: "Mitologia", catLabel_custom: "I tuoi nomi",
+    appTitle: "Chi sono?", subtitle: "Nomi famosi · stile Heads Up",
+    roundDuration: "Durata", noLimit: "Senza limite", categories: "Categorie", catsHint: "Tocca per attivare",
+    addNames: "I tuoi nomi", customPlaceholder: "es. un amico", add: "Aggiungi",
+    start: "Inizia", warnSelect: "Scegli una categoria o aggiungi un nome",
+    hintPlay: "Tieni il telefono sulla fronte. Gli amici danno indizi.",
+    sec: "sec", reroll: "Passa", gotIt: "Fatto", endRound: "Termina",
+    roundOver: "Round terminato", correctGuesses: "corretti", rerolls: "saltati",
+    playAgain: "Gioca ancora", changeSettings: "Impostazioni",
+    getReady: "Pronti?", tapToStart: "Tocca quando siete pronti",
+  },
+  de: {
+    catLabel_actors: "Film & TV", catLabel_music: "Musik", catLabel_sports: "Sport", catLabel_science: "Wissenschaft",
+    catLabel_history: "Geschichte & Politik", catLabel_tech: "Business & Tech", catLabel_art: "Kunst & Kultur",
+    catLabel_games: "Videospiele", catLabel_fiction: "Charaktere", catLabel_myth: "Mythologie", catLabel_custom: "Deine Namen",
+    appTitle: "Wer bin ich?", subtitle: "Berühmte Namen · Heads-Up-Stil",
+    roundDuration: "Dauer", noLimit: "Kein Limit", categories: "Kategorien", catsHint: "Tippen zum Aktivieren",
+    addNames: "Eigene Namen", customPlaceholder: "z.B. ein Freund", add: "Hinzufügen",
+    start: "Start", warnSelect: "Wähle eine Kategorie oder füge einen Namen hinzu",
+    hintPlay: "Halte das Handy an die Stirn. Freunde geben Hinweise.",
+    sec: "Sek", reroll: "Skip", gotIt: "Richtig", endRound: "Runde beenden",
+    roundOver: "Runde beendet", correctGuesses: "richtig", rerolls: "übersprungen",
+    playAgain: "Nochmal", changeSettings: "Einstellungen",
+    getReady: "Bereit?", tapToStart: "Tippen, wenn alle bereit sind",
+  },
+  ru: {
+    catLabel_actors: "Кино и ТВ", catLabel_music: "Музыка", catLabel_sports: "Спорт", catLabel_science: "Наука",
+    catLabel_history: "История и Политика", catLabel_tech: "Бизнес и Tech", catLabel_art: "Искусство",
+    catLabel_games: "Видеоигры", catLabel_fiction: "Персонажи", catLabel_myth: "Мифология", catLabel_custom: "Ваши имена",
+    appTitle: "Кто я?", subtitle: "Знаменитости · стиль Heads Up",
+    roundDuration: "Длительность", noLimit: "Без лимита", categories: "Категории", catsHint: "Нажмите, чтобы включить",
+    addNames: "Свои имена", customPlaceholder: "напр. имя друга", add: "Добавить",
+    start: "Начать", warnSelect: "Выберите категорию или добавьте имя",
+    hintPlay: "Держите телефон у лба. Друзья дают подсказки.",
+    sec: "сек", reroll: "Пропуск", gotIt: "Есть!", endRound: "Завершить",
+    roundOver: "Раунд окончен", correctGuesses: "верных", rerolls: "пропущено",
+    playAgain: "Ещё раз", changeSettings: "Настройки",
+    getReady: "Готовы?", tapToStart: "Нажмите, когда все готовы",
+  },
+};
