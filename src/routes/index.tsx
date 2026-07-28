@@ -27,6 +27,7 @@ type Screen = "setup" | "ready" | "playing" | "results";
 
 const CUSTOM_KEY = "whoami_custom_names";
 const LANG_KEY = "whoami_lang";
+const TILT_KEY = "whoami_tilt_mode";
 
 const ALL_CATS: Category[] = ["actors", "music", "sports", "science", "history", "tech", "art", "games", "fiction", "myth"];
 
@@ -47,6 +48,8 @@ function WhoAmI() {
   const [selectedCats, setSelectedCats] = useState<Set<Category>>(new Set(ALL_CATS));
   const [customs, setCustoms] = useState<CustomEntry[]>([]);
   const [customInput, setCustomInput] = useState("");
+  const [tiltMode, setTiltMode] = useState<boolean>(true);
+  const [tiltArmed, setTiltArmed] = useState(false);
 
   const [deck, setDeck] = useState<Person[]>([]);
   const [current, setCurrent] = useState<Person | null>(null);
@@ -75,6 +78,8 @@ function WhoAmI() {
       }
       const rawCustom = localStorage.getItem(CUSTOM_KEY);
       if (rawCustom) setCustoms(JSON.parse(rawCustom));
+      const rawTilt = localStorage.getItem(TILT_KEY);
+      if (rawTilt != null) setTiltMode(rawTilt === "1");
     } catch {}
   }, []);
 
@@ -89,6 +94,11 @@ function WhoAmI() {
       localStorage.setItem(CUSTOM_KEY, JSON.stringify(customs));
     } catch {}
   }, [customs]);
+  useEffect(() => {
+    try {
+      localStorage.setItem(TILT_KEY, tiltMode ? "1" : "0");
+    } catch {}
+  }, [tiltMode]);
 
   // Close lang menu on outside click
   useEffect(() => {
@@ -163,38 +173,42 @@ function WhoAmI() {
   }, [screen, duration]);
 
 
+  // Arm tilt after a small delay so placing the phone on the forehead
+  // doesn't accidentally count as an answer.
+  useEffect(() => {
+    if (screen !== "playing") {
+      setTiltArmed(false);
+      return;
+    }
+    const id = window.setTimeout(() => setTiltArmed(true), 1200);
+    return () => window.clearTimeout(id);
+  }, [screen]);
+
   const handleCorrect = useCallback(() => {
-    setCurrent((cur) => {
-      if (!cur) return cur;
-      setFlash("correct");
-      setCorrect((c) => [...c, cur]);
-      setDeck((d) => {
-        const [next, ...rest] = d.length > 0 ? d : shuffle(pool);
-        setCurrent(next ?? null);
-        return rest;
-      });
-      window.setTimeout(() => setFlash(null), 450);
-      return cur;
-    });
-  }, [pool]);
+    if (!current) return;
+    const cur = current;
+    setFlash("correct");
+    setCorrect((c) => [...c, cur]);
+    const source = deck.length > 0 ? deck : shuffle(pool);
+    setCurrent(source[0] ?? null);
+    setDeck(source.slice(1));
+    window.setTimeout(() => setFlash(null), 450);
+  }, [current, deck, pool]);
+
   const handleSkip = useCallback(() => {
-    setCurrent((cur) => {
-      if (!cur) return cur;
-      setFlash("skip");
-      setSkips((s) => [...s, cur]);
-      setDeck((d) => {
-        const nd = [...d, cur];
-        const [next, ...rest] = nd.length > 0 ? nd : shuffle(pool);
-        setCurrent(next ?? null);
-        return rest;
-      });
-      window.setTimeout(() => setFlash(null), 450);
-      return cur;
-    });
-  }, [pool]);
+    if (!current) return;
+    const cur = current;
+    setFlash("skip");
+    setSkips((s) => [...s, cur]);
+    // Put the skipped card back at the end so it can come around again.
+    const source = deck.length > 0 ? [...deck, cur] : shuffle([...pool, cur]);
+    setCurrent(source[0] ?? null);
+    setDeck(source.slice(1));
+    window.setTimeout(() => setFlash(null), 450);
+  }, [current, deck, pool]);
 
   const { permissionState, requestPermission } = useTiltControls({
-    enabled: screen === "playing",
+    enabled: screen === "playing" && tiltMode && tiltArmed,
     onCorrect: handleCorrect,
     onSkip: handleSkip,
   });
@@ -239,8 +253,10 @@ function WhoAmI() {
         <ReadyScreen
           t={t}
           duration={duration}
+          tiltMode={tiltMode}
+          setTiltMode={setTiltMode}
           onStart={async () => {
-            await requestPermission();
+            if (tiltMode) await requestPermission();
             startRound();
           }}
           onBack={() => setScreen("setup")}
@@ -248,21 +264,45 @@ function WhoAmI() {
       )}
 
       {screen === "playing" && current && (
-        <LandscapeStage>
-          <PlayScreen
-            t={t}
-            catLabel={catLabel}
-            current={current}
-            timeLeft={timeLeft}
-            elapsed={elapsed}
-            duration={duration}
-            correctCount={correct.length}
-            onCorrect={handleCorrect}
-            onSkip={handleSkip}
-            onEnd={() => setScreen("results")}
-            tiltState={permissionState}
-          />
-        </LandscapeStage>
+        tiltMode ? (
+          <LandscapeStage>
+            <PlayScreen
+              t={t}
+              catLabel={catLabel}
+              current={current}
+              timeLeft={timeLeft}
+              elapsed={elapsed}
+              duration={duration}
+              correctCount={correct.length}
+              onCorrect={handleCorrect}
+              onSkip={handleSkip}
+              onEnd={() => setScreen("results")}
+              tiltState={tiltArmed ? permissionState : "pending"}
+              tiltMode={tiltMode}
+              armingHint={!tiltArmed ? t("tiltArming") : null}
+              compact
+            />
+          </LandscapeStage>
+        ) : (
+          <div className="min-h-dvh">
+            <PlayScreen
+              t={t}
+              catLabel={catLabel}
+              current={current}
+              timeLeft={timeLeft}
+              elapsed={elapsed}
+              duration={duration}
+              correctCount={correct.length}
+              onCorrect={handleCorrect}
+              onSkip={handleSkip}
+              onEnd={() => setScreen("results")}
+              tiltState={permissionState}
+              tiltMode={tiltMode}
+              armingHint={null}
+              compact={false}
+            />
+          </div>
+        )
       )}
 
       {screen === "results" && (
@@ -501,15 +541,17 @@ function SetupScreen(props: {
 /* ---------- READY ---------- */
 
 function ReadyScreen({
-  t, duration, onStart, onBack,
+  t, duration, tiltMode, setTiltMode, onStart, onBack,
 }: {
   t: (k: string) => string;
   duration: Duration;
+  tiltMode: boolean;
+  setTiltMode: (v: boolean) => void;
   onStart: () => void;
   onBack: () => void;
 }) {
   return (
-    <div className="mx-auto flex min-h-dvh max-w-md flex-col items-center justify-center px-6 text-center">
+    <div className="mx-auto flex min-h-dvh max-w-md flex-col items-center justify-center px-6 py-8 text-center">
       <div className="mb-8 flex gap-1.5">
         {Array.from({ length: 3 }).map((_, i) => (
           <span
@@ -526,9 +568,40 @@ function ReadyScreen({
       <p className="mt-3 max-w-[32ch] text-sm leading-relaxed text-muted-foreground">
         {t("hintPlay")}
       </p>
+
+      {/* Tilt mode toggle */}
+      <div className="card-glass mt-8 w-full p-4 text-left">
+        <div className="flex items-center justify-between gap-3">
+          <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-muted-foreground">
+            {t("tiltMode")}
+          </p>
+          <div className="flex items-center gap-1 rounded-full border border-border bg-surface/60 p-1">
+            <button
+              onClick={() => setTiltMode(true)}
+              className={`rounded-full px-3 py-1 text-xs font-semibold transition ${
+                tiltMode ? "bg-primary text-primary-foreground" : "text-foreground/70"
+              }`}
+            >
+              {t("tiltOn")}
+            </button>
+            <button
+              onClick={() => setTiltMode(false)}
+              className={`rounded-full px-3 py-1 text-xs font-semibold transition ${
+                !tiltMode ? "bg-primary text-primary-foreground" : "text-foreground/70"
+              }`}
+            >
+              {t("tiltOff")}
+            </button>
+          </div>
+        </div>
+        <p className="mt-3 text-xs leading-relaxed text-muted-foreground/85">
+          {tiltMode ? t("tiltModeExplain") : t("noTiltModeExplain")}
+        </p>
+      </div>
+
       <button
         onClick={onStart}
-        className="btn-primary mt-10 h-16 w-full rounded-2xl text-lg font-semibold"
+        className="btn-primary mt-6 h-16 w-full rounded-2xl text-lg font-semibold"
       >
         {t("tapToStart")}
       </button>
@@ -596,7 +669,7 @@ function LandscapeStage({ children }: { children: React.ReactNode }) {
 
 
 function PlayScreen({
-  t, catLabel, current, timeLeft, elapsed, duration, correctCount, onCorrect, onSkip, onEnd, tiltState,
+  t, catLabel, current, timeLeft, elapsed, duration, correctCount, onCorrect, onSkip, onEnd, tiltState, tiltMode, armingHint, compact,
 }: {
   t: (k: string) => string;
   catLabel: (k: Category) => string;
@@ -609,6 +682,9 @@ function PlayScreen({
   onSkip: () => void;
   onEnd: () => void;
   tiltState: "pending" | "granted" | "denied" | "unsupported";
+  tiltMode: boolean;
+  armingHint: string | null;
+  compact: boolean;
 }) {
   const isUnlimited = duration === NO_LIMIT;
   const meta = CATEGORY_META[current.cat];
@@ -616,23 +692,33 @@ function PlayScreen({
   const timerNum = isUnlimited ? elapsed : timeLeft;
   const warn = !isUnlimited && timeLeft <= 10;
 
+  // Compact = rotated landscape stage (short vertical axis). Tighten spacing so buttons fit.
+  const rootPad = compact ? "px-4 pb-2 pt-2" : "px-5 pb-6 pt-6";
+  const cardPadY = compact ? "py-6" : "py-14";
+  const cardGap = compact ? "gap-2" : "gap-5";
+  const nameSize = compact ? "text-3xl sm:text-4xl" : "text-4xl sm:text-5xl";
+  const btnH = compact ? "h-12" : "h-16";
+  const btnGridMt = compact ? "mt-3" : "mt-6";
+  const timerSize = compact ? "text-2xl" : "text-4xl";
+  const cardWrapMt = compact ? "mt-3" : "mt-8";
+
   return (
-    <div className="mx-auto flex h-full min-h-full max-w-md flex-col px-5 pb-6 pt-6">
+    <div className={`mx-auto flex h-full min-h-full max-w-md flex-col ${rootPad}`}>
       {/* top row */}
       <div className="flex items-center justify-between">
         <div className={`flex items-baseline gap-1.5 ${warn ? "text-destructive" : "text-foreground"}`}>
-          <span className="display text-4xl font-semibold tabular-nums">{timerNum}</span>
+          <span className={`display ${timerSize} font-semibold tabular-nums`}>{timerNum}</span>
           <span className="text-xs uppercase tracking-widest text-muted-foreground">{t("sec")}</span>
         </div>
         <div className="flex items-baseline gap-1.5">
-          <span className="display text-4xl font-semibold tabular-nums text-primary">{correctCount}</span>
+          <span className={`display ${timerSize} font-semibold tabular-nums text-primary`}>{correctCount}</span>
           <span className="text-xs uppercase tracking-widest text-muted-foreground">score</span>
         </div>
       </div>
 
       {/* progress */}
       {!isUnlimited ? (
-        <div className="mt-4 h-1.5 w-full overflow-hidden rounded-full bg-surface/70">
+        <div className={`${compact ? "mt-2" : "mt-4"} h-1.5 w-full overflow-hidden rounded-full bg-surface/70`}>
           <div
             className="h-full rounded-full transition-all duration-300"
             style={{
@@ -644,14 +730,14 @@ function PlayScreen({
           />
         </div>
       ) : (
-        <div className="h-8" />
+        <div className={compact ? "h-3" : "h-8"} />
       )}
 
       {/* name card */}
-      <div className="mt-8 flex flex-1 items-center justify-center">
+      <div className={`${cardWrapMt} flex flex-1 items-center justify-center`}>
         <div
           key={current.name}
-          className="card-in card-glass relative flex w-full flex-col items-center justify-center gap-5 rounded-3xl px-6 py-14 text-center"
+          className={`card-in card-glass relative flex w-full flex-col items-center justify-center ${cardGap} rounded-3xl px-6 ${cardPadY} text-center`}
           style={{ boxShadow: `0 30px 80px -20px ${meta.color}30, 0 0 0 1px ${meta.color}22` }}
         >
           <span
@@ -664,44 +750,48 @@ function PlayScreen({
           >
             {meta.emoji} {catLabel(current.cat)}
           </span>
-          <h2 className="display text-balance text-4xl font-semibold leading-tight sm:text-5xl">
+          <h2 className={`display text-balance ${nameSize} font-semibold leading-tight`}>
             {current.name}
           </h2>
         </div>
       </div>
 
       {/* buttons */}
-      <div className="mt-6 grid grid-cols-2 gap-3">
+      <div className={`${btnGridMt} grid grid-cols-2 gap-3`}>
         <button
           onClick={onSkip}
-          className="h-16 rounded-2xl border border-border bg-surface/70 text-base font-semibold text-foreground/90 backdrop-blur transition active:scale-95"
+          className={`${btnH} rounded-2xl border border-border bg-surface/70 text-base font-semibold text-foreground/90 backdrop-blur transition active:scale-95`}
         >
           <span className="mr-1.5">↺</span>
           {t("reroll")}
         </button>
         <button
           onClick={onCorrect}
-          className="btn-primary h-16 rounded-2xl text-base font-semibold"
+          className={`btn-primary ${btnH} rounded-2xl text-base font-semibold`}
         >
           <span className="mr-1.5">✓</span>
           {t("gotIt")}
         </button>
       </div>
 
-      <p className="mt-3 text-center text-[11px] leading-relaxed text-muted-foreground/70">
-        {tiltState === "granted"
-          ? t("tiltHint")
-          : tiltState === "denied"
-            ? t("tiltDenied")
-            : tiltState === "unsupported"
-              ? t("tiltUnsupported")
-              : t("tiltPending")}
-      </p>
+      {tiltMode && (
+        <p className={`${compact ? "mt-1.5" : "mt-3"} text-center text-[11px] leading-relaxed text-muted-foreground/70`}>
+          {armingHint
+            ? armingHint
+            : tiltState === "granted"
+              ? t("tiltHint")
+              : tiltState === "denied"
+                ? t("tiltDenied")
+                : tiltState === "unsupported"
+                  ? t("tiltUnsupported")
+                  : t("tiltPending")}
+        </p>
+      )}
 
       {isUnlimited && (
         <button
           onClick={onEnd}
-          className="mt-3 text-center text-xs text-muted-foreground underline-offset-4 hover:underline"
+          className={`${compact ? "mt-1" : "mt-3"} text-center text-xs text-muted-foreground underline-offset-4 hover:underline`}
         >
           {t("endRound")}
         </button>

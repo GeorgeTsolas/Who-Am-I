@@ -49,6 +49,10 @@ export const TRANSLATIONS: Record<LangCode, Dict> = {
     playAgain: "Play again", changeSettings: "Change settings",
     getReady: "Get ready", tapToStart: "Tap when everyone's ready",
     tiltHint: "Tilt down = correct · Tilt up = skip", tiltDenied: "Motion access denied — use the buttons", tiltUnsupported: "Use the buttons on this device", tiltPending: "Use the buttons or enable motion access",
+    tiltMode: "Tilt mode", tiltOn: "On", tiltOff: "Off",
+    tiltModeExplain: "On: phone locks to landscape on your forehead. Tilt down = correct, up = skip.",
+    noTiltModeExplain: "Off: hold the phone however you like. Use the on-screen buttons to answer.",
+    tiltArming: "Get set…",
   },
   el: {
     catLabel_actors: "Ταινίες & TV", catLabel_music: "Μουσική", catLabel_sports: "Αθλητισμός", catLabel_science: "Επιστήμη",
@@ -64,6 +68,10 @@ export const TRANSLATIONS: Record<LangCode, Dict> = {
     playAgain: "Ξανά", changeSettings: "Ρυθμίσεις",
     getReady: "Ετοιμάσου", tapToStart: "Πάτα όταν είναι όλοι έτοιμοι",
     tiltHint: "Κάτω = σωστό · Πάνω = πάσο", tiltDenied: "Χωρίς πρόσβαση κίνησης — χρησιμοποίησε τα κουμπιά", tiltUnsupported: "Χρησιμοποίησε τα κουμπιά", tiltPending: "Χρησιμοποίησε τα κουμπιά ή ενεργοποίησε την κίνηση",
+    tiltMode: "Λειτουργία κλίσης", tiltOn: "Ενεργή", tiltOff: "Ανενεργή",
+    tiltModeExplain: "Ενεργή: η οθόνη κλειδώνει οριζόντια στο μέτωπο. Κλίση κάτω = σωστό, πάνω = πάσο.",
+    noTiltModeExplain: "Ανενεργή: κράτα το κινητό όπως θες. Απάντα με τα κουμπιά της οθόνης.",
+    tiltArming: "Έτοιμοι…",
   },
   fr: {
     catLabel_actors: "Cinéma & TV", catLabel_music: "Musique", catLabel_sports: "Sport", catLabel_science: "Science",
