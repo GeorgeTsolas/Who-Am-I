@@ -18,10 +18,10 @@ type Calibration = {
 
 type OrientationSample = { beta: number; gamma: number };
 
-const ORIENTATION_TRIGGER = 76;
-const ORIENTATION_RESET = 30;
-const MOTION_TRIGGER = 6.75;
-const MOTION_RESET = 2.4;
+const ORIENTATION_TRIGGER = 60;
+const ORIENTATION_RESET = 24;
+const MOTION_TRIGGER = 4.8;
+const MOTION_RESET = 1.8;
 const CALIBRATION_MS = 360;
 const MIN_TRIGGER_GAP_MS = 720;
 
@@ -109,11 +109,11 @@ export function useTiltControls({ enabled, onCorrect, onSkip }: Options) {
     if (smoothed > trigger) {
       lastTriggerAtRef.current = now;
       stateRef.current = "awaiting-reset";
-      handlersRef.current.onCorrect();
+      handlersRef.current.onSkip();
     } else if (smoothed < -trigger) {
       lastTriggerAtRef.current = now;
       stateRef.current = "awaiting-reset";
-      handlersRef.current.onSkip();
+      handlersRef.current.onCorrect();
     }
   }, []);
 
