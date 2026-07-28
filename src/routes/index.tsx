@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { PEOPLE, type Category, type Person } from "@/data/people";
 import { CATEGORY_META, LANG_OPTIONS, TRANSLATIONS, type LangCode } from "@/data/game";
+import { useTiltControls } from "@/hooks/use-tilt-controls";
 
 export const Route = createFileRoute("/")({
   component: WhoAmI,
