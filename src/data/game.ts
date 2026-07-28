@@ -48,6 +48,7 @@ export const TRANSLATIONS: Record<LangCode, Dict> = {
     roundOver: "Round over", correctGuesses: "correct", rerolls: "skipped",
     playAgain: "Play again", changeSettings: "Change settings",
     getReady: "Get ready", tapToStart: "Tap when everyone's ready",
+    tiltHint: "Tilt down = correct · Tilt up = skip", tiltDenied: "Motion access denied — use the buttons", tiltUnsupported: "Use the buttons on this device", tiltPending: "Use the buttons or enable motion access",
   },
   el: {
     catLabel_actors: "Ταινίες & TV", catLabel_music: "Μουσική", catLabel_sports: "Αθλητισμός", catLabel_science: "Επιστήμη",
@@ -62,6 +63,7 @@ export const TRANSLATIONS: Record<LangCode, Dict> = {
     roundOver: "Ο γύρος τελείωσε", correctGuesses: "σωστά", rerolls: "πάσα",
     playAgain: "Ξανά", changeSettings: "Ρυθμίσεις",
     getReady: "Ετοιμάσου", tapToStart: "Πάτα όταν είναι όλοι έτοιμοι",
+    tiltHint: "Κάτω = σωστό · Πάνω = πάσο", tiltDenied: "Χωρίς πρόσβαση κίνησης — χρησιμοποίησε τα κουμπιά", tiltUnsupported: "Χρησιμοποίησε τα κουμπιά", tiltPending: "Χρησιμοποίησε τα κουμπιά ή ενεργοποίησε την κίνηση",
   },
   fr: {
     catLabel_actors: "Cinéma & TV", catLabel_music: "Musique", catLabel_sports: "Sport", catLabel_science: "Science",
@@ -76,6 +78,7 @@ export const TRANSLATIONS: Record<LangCode, Dict> = {
     roundOver: "Manche terminée", correctGuesses: "trouvés", rerolls: "passés",
     playAgain: "Rejouer", changeSettings: "Réglages",
     getReady: "Prêt ?", tapToStart: "Touchez quand tout le monde est prêt",
+    tiltHint: "Bas = trouvé · Haut = passer", tiltDenied: "Accès mouvement refusé — utilisez les boutons", tiltUnsupported: "Utilisez les boutons", tiltPending: "Utilisez les boutons ou activez le mouvement",
   },
   es: {
     catLabel_actors: "Cine y TV", catLabel_music: "Música", catLabel_sports: "Deportes", catLabel_science: "Ciencia",
@@ -90,6 +93,7 @@ export const TRANSLATIONS: Record<LangCode, Dict> = {
     roundOver: "Ronda terminada", correctGuesses: "correctos", rerolls: "pasados",
     playAgain: "Jugar de nuevo", changeSettings: "Ajustes",
     getReady: "¿Listos?", tapToStart: "Toca cuando estén listos",
+    tiltHint: "Abajo = correcto · Arriba = pasar", tiltDenied: "Sin acceso al movimiento — usa los botones", tiltUnsupported: "Usa los botones", tiltPending: "Usa los botones o activa el movimiento",
   },
   it: {
     catLabel_actors: "Film e TV", catLabel_music: "Musica", catLabel_sports: "Sport", catLabel_science: "Scienza",
@@ -104,6 +108,7 @@ export const TRANSLATIONS: Record<LangCode, Dict> = {
     roundOver: "Round terminato", correctGuesses: "corretti", rerolls: "saltati",
     playAgain: "Gioca ancora", changeSettings: "Impostazioni",
     getReady: "Pronti?", tapToStart: "Tocca quando siete pronti",
+    tiltHint: "Giù = corretto · Su = passa", tiltDenied: "Accesso movimento negato — usa i pulsanti", tiltUnsupported: "Usa i pulsanti", tiltPending: "Usa i pulsanti o abilita il movimento",
   },
   de: {
     catLabel_actors: "Film & TV", catLabel_music: "Musik", catLabel_sports: "Sport", catLabel_science: "Wissenschaft",
@@ -118,6 +123,7 @@ export const TRANSLATIONS: Record<LangCode, Dict> = {
     roundOver: "Runde beendet", correctGuesses: "richtig", rerolls: "übersprungen",
     playAgain: "Nochmal", changeSettings: "Einstellungen",
     getReady: "Bereit?", tapToStart: "Tippen, wenn alle bereit sind",
+    tiltHint: "Runter = richtig · Hoch = skip", tiltDenied: "Bewegungszugriff verweigert — nutze die Buttons", tiltUnsupported: "Nutze die Buttons", tiltPending: "Nutze die Buttons oder aktiviere Bewegung",
   },
   ru: {
     catLabel_actors: "Кино и ТВ", catLabel_music: "Музыка", catLabel_sports: "Спорт", catLabel_science: "Наука",
@@ -132,5 +138,6 @@ export const TRANSLATIONS: Record<LangCode, Dict> = {
     roundOver: "Раунд окончен", correctGuesses: "верных", rerolls: "пропущено",
     playAgain: "Ещё раз", changeSettings: "Настройки",
     getReady: "Готовы?", tapToStart: "Нажмите, когда все готовы",
+    tiltHint: "Вниз = верно · Вверх = пропуск", tiltDenied: "Нет доступа к движению — используйте кнопки", tiltUnsupported: "Используйте кнопки", tiltPending: "Используйте кнопки или включите движение",
   },
 };
