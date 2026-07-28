@@ -171,18 +171,6 @@ function WhoAmI() {
     });
   };
 
-  const handleCorrect = () => {
-    if (!current) return;
-    setFlash("correct");
-    setCorrect((c) => [...c, current]);
-    drawNext((d) => d);
-    window.setTimeout(() => setFlash(null), 450);
-  };
-  const handleSkip = () => {
-    if (!current) return;
-    setFlash("skip");
-    setSkips((s) => [...s, current]);
-    drawNext((d) => [...d, current]);
   const handleCorrect = useCallback(() => {
     setCurrent((cur) => {
       if (!cur) return cur;
