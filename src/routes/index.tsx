@@ -545,10 +545,17 @@ function SetupScreen(props: {
         <p className="mt-1 max-w-[34ch] text-center text-xs leading-relaxed text-muted-foreground/80">
           {t("hintPlay")}
         </p>
+        <a
+          href="/privacy"
+          className="mt-3 text-[11px] uppercase tracking-[0.22em] text-muted-foreground/70 hover:text-foreground"
+        >
+          Privacy
+        </a>
       </div>
     </div>
   );
 }
+
 
 /* ---------- READY ---------- */
 
