@@ -259,6 +259,7 @@ function WhoAmI() {
           onCorrect={handleCorrect}
           onSkip={handleSkip}
           onEnd={() => setScreen("results")}
+          tiltState={permissionState}
         />
       )}
 
