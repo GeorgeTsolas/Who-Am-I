@@ -173,38 +173,42 @@ function WhoAmI() {
   }, [screen, duration]);
 
 
+  // Arm tilt after a small delay so placing the phone on the forehead
+  // doesn't accidentally count as an answer.
+  useEffect(() => {
+    if (screen !== "playing") {
+      setTiltArmed(false);
+      return;
+    }
+    const id = window.setTimeout(() => setTiltArmed(true), 1200);
+    return () => window.clearTimeout(id);
+  }, [screen]);
+
   const handleCorrect = useCallback(() => {
-    setCurrent((cur) => {
-      if (!cur) return cur;
-      setFlash("correct");
-      setCorrect((c) => [...c, cur]);
-      setDeck((d) => {
-        const [next, ...rest] = d.length > 0 ? d : shuffle(pool);
-        setCurrent(next ?? null);
-        return rest;
-      });
-      window.setTimeout(() => setFlash(null), 450);
-      return cur;
-    });
-  }, [pool]);
+    if (!current) return;
+    const cur = current;
+    setFlash("correct");
+    setCorrect((c) => [...c, cur]);
+    const source = deck.length > 0 ? deck : shuffle(pool);
+    setCurrent(source[0] ?? null);
+    setDeck(source.slice(1));
+    window.setTimeout(() => setFlash(null), 450);
+  }, [current, deck, pool]);
+
   const handleSkip = useCallback(() => {
-    setCurrent((cur) => {
-      if (!cur) return cur;
-      setFlash("skip");
-      setSkips((s) => [...s, cur]);
-      setDeck((d) => {
-        const nd = [...d, cur];
-        const [next, ...rest] = nd.length > 0 ? nd : shuffle(pool);
-        setCurrent(next ?? null);
-        return rest;
-      });
-      window.setTimeout(() => setFlash(null), 450);
-      return cur;
-    });
-  }, [pool]);
+    if (!current) return;
+    const cur = current;
+    setFlash("skip");
+    setSkips((s) => [...s, cur]);
+    // Put the skipped card back at the end so it can come around again.
+    const source = deck.length > 0 ? [...deck, cur] : shuffle([...pool, cur]);
+    setCurrent(source[0] ?? null);
+    setDeck(source.slice(1));
+    window.setTimeout(() => setFlash(null), 450);
+  }, [current, deck, pool]);
 
   const { permissionState, requestPermission } = useTiltControls({
-    enabled: screen === "playing",
+    enabled: screen === "playing" && tiltMode && tiltArmed,
     onCorrect: handleCorrect,
     onSkip: handleSkip,
   });
