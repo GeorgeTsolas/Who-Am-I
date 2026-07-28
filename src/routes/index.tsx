@@ -253,8 +253,10 @@ function WhoAmI() {
         <ReadyScreen
           t={t}
           duration={duration}
+          tiltMode={tiltMode}
+          setTiltMode={setTiltMode}
           onStart={async () => {
-            await requestPermission();
+            if (tiltMode) await requestPermission();
             startRound();
           }}
           onBack={() => setScreen("setup")}
@@ -262,21 +264,45 @@ function WhoAmI() {
       )}
 
       {screen === "playing" && current && (
-        <LandscapeStage>
-          <PlayScreen
-            t={t}
-            catLabel={catLabel}
-            current={current}
-            timeLeft={timeLeft}
-            elapsed={elapsed}
-            duration={duration}
-            correctCount={correct.length}
-            onCorrect={handleCorrect}
-            onSkip={handleSkip}
-            onEnd={() => setScreen("results")}
-            tiltState={permissionState}
-          />
-        </LandscapeStage>
+        tiltMode ? (
+          <LandscapeStage>
+            <PlayScreen
+              t={t}
+              catLabel={catLabel}
+              current={current}
+              timeLeft={timeLeft}
+              elapsed={elapsed}
+              duration={duration}
+              correctCount={correct.length}
+              onCorrect={handleCorrect}
+              onSkip={handleSkip}
+              onEnd={() => setScreen("results")}
+              tiltState={tiltArmed ? permissionState : "pending"}
+              tiltMode={tiltMode}
+              armingHint={!tiltArmed ? t("tiltArming") : null}
+              compact
+            />
+          </LandscapeStage>
+        ) : (
+          <div className="min-h-dvh">
+            <PlayScreen
+              t={t}
+              catLabel={catLabel}
+              current={current}
+              timeLeft={timeLeft}
+              elapsed={elapsed}
+              duration={duration}
+              correctCount={correct.length}
+              onCorrect={handleCorrect}
+              onSkip={handleSkip}
+              onEnd={() => setScreen("results")}
+              tiltState={permissionState}
+              tiltMode={tiltMode}
+              armingHint={null}
+              compact={false}
+            />
+          </div>
+        )
       )}
 
       {screen === "results" && (
