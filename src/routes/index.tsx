@@ -535,7 +535,7 @@ function PlayScreen({
 }) {
   const isUnlimited = duration === NO_LIMIT;
   const meta = CATEGORY_META[current.cat];
-  const pct = !isUnlimited && duration !== NO_LIMIT ? (timeLeft / (duration as number)) * 100 : 100;
+  const pct = !isUnlimited ? (timeLeft / (duration as number)) * 100 : 100;
   const timerNum = isUnlimited ? elapsed : timeLeft;
   const warn = !isUnlimited && timeLeft <= 10;
 
