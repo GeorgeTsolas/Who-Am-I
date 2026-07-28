@@ -565,7 +565,7 @@ function LandscapeStage({ children }: { children: React.ReactNode }) {
 
   // Try to lock native landscape (Android/Chrome); silently ignored on iOS.
   useEffect(() => {
-    const scr = window.screen as Screen & {
+    const scr = window.screen as unknown as {
       orientation?: { lock?: (o: string) => Promise<void>; unlock?: () => void };
     };
     scr.orientation?.lock?.("landscape").catch(() => {});
