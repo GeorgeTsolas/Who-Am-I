@@ -1,6 +1,6 @@
 # Who Am I?
 
-A mobile-first *Heads Up*–style party game. Hold the phone to your forehead, your friends give clues, tilt to answer.
+A mobile-first *Heads Up*–style party game by **GeoloApps**. Hold the phone to your forehead, your friends give clues, tilt to answer.
 
 ---
 
@@ -57,4 +57,4 @@ The app runs at `http://localhost:8080`.
 
 ## License
 
-Personal project. All third-party names are used for entertainment purposes only.
+© GeoloApps. Personal project. All third-party names are used for entertainment purposes only.

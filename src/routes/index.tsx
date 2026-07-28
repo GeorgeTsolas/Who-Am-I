@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { PEOPLE, type Category, type Person } from "@/data/people";
 import { CATEGORY_META, LANG_OPTIONS, TRANSLATIONS, type LangCode } from "@/data/game";
@@ -545,12 +545,12 @@ function SetupScreen(props: {
         <p className="mt-1 max-w-[34ch] text-center text-xs leading-relaxed text-muted-foreground/80">
           {t("hintPlay")}
         </p>
-        <a
-          href="/privacy"
+        <Link
+          to="/privacy"
           className="mt-3 text-[11px] uppercase tracking-[0.22em] text-muted-foreground/70 hover:text-foreground"
         >
-          Privacy
-        </a>
+          Privacy · GeoloApps
+        </Link>
       </div>
     </div>
   );
