@@ -48,6 +48,8 @@ function WhoAmI() {
   const [selectedCats, setSelectedCats] = useState<Set<Category>>(new Set(ALL_CATS));
   const [customs, setCustoms] = useState<CustomEntry[]>([]);
   const [customInput, setCustomInput] = useState("");
+  const [tiltMode, setTiltMode] = useState<boolean>(true);
+  const [tiltArmed, setTiltArmed] = useState(false);
 
   const [deck, setDeck] = useState<Person[]>([]);
   const [current, setCurrent] = useState<Person | null>(null);
