@@ -29,14 +29,13 @@ jobs:
 
       - name: Build static site
         env:
-          GITHUB_PAGES: "1"
           GITHUB_PAGES_BASE: "/${{ github.event.repository.name }}/"
-        run: bun run build
+        run: bun run build:pages
 
       - name: Locate static output
         id: locate
         run: |
-          for dir in .output/public dist/client dist .nitro/public; do
+          for dir in dist-pages .output/public dist/client dist .nitro/public; do
             if [ -d "$dir" ] && [ -f "$dir/index.html" ]; then
               echo "dir=$dir" >> "$GITHUB_OUTPUT"
               echo "Found static output at $dir"
