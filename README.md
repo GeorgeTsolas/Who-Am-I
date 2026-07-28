@@ -1,18 +1,9 @@
-<p align="center">
-  <img src="src/assets/feature-graphic.png" alt="Who Am I? — Heads Up party game" width="100%" />
-</p>
+# Who Am I?
 
-<h1 align="center">
-  <img src="src/assets/icon-512.png" alt="" width="28" height="28" align="center" />
-  Who Am I?
-</h1>
-
-<p align="center">
-  A mobile-first <em>Heads Up</em>–style party game.<br/>
-  Hold the phone to your forehead, your friends give clues, tilt to answer.
-</p>
+A mobile-first *Heads Up*–style party game. Hold the phone to your forehead, your friends give clues, tilt to answer.
 
 ---
+
 
 ## About the game
 
