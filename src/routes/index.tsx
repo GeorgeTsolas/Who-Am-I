@@ -27,6 +27,7 @@ type Screen = "setup" | "ready" | "playing" | "results";
 
 const CUSTOM_KEY = "whoami_custom_names";
 const LANG_KEY = "whoami_lang";
+const TILT_KEY = "whoami_tilt_mode";
 
 const ALL_CATS: Category[] = ["actors", "music", "sports", "science", "history", "tech", "art", "games", "fiction", "myth"];
 
