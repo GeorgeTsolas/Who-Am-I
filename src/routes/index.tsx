@@ -669,7 +669,7 @@ function LandscapeStage({ children }: { children: React.ReactNode }) {
 
 
 function PlayScreen({
-  t, catLabel, current, timeLeft, elapsed, duration, correctCount, onCorrect, onSkip, onEnd, tiltState,
+  t, catLabel, current, timeLeft, elapsed, duration, correctCount, onCorrect, onSkip, onEnd, tiltState, tiltMode, armingHint, compact,
 }: {
   t: (k: string) => string;
   catLabel: (k: Category) => string;
@@ -682,6 +682,9 @@ function PlayScreen({
   onSkip: () => void;
   onEnd: () => void;
   tiltState: "pending" | "granted" | "denied" | "unsupported";
+  tiltMode: boolean;
+  armingHint: string | null;
+  compact: boolean;
 }) {
   const isUnlimited = duration === NO_LIMIT;
   const meta = CATEGORY_META[current.cat];
@@ -689,23 +692,33 @@ function PlayScreen({
   const timerNum = isUnlimited ? elapsed : timeLeft;
   const warn = !isUnlimited && timeLeft <= 10;
 
+  // Compact = rotated landscape stage (short vertical axis). Tighten spacing so buttons fit.
+  const rootPad = compact ? "px-4 pb-2 pt-2" : "px-5 pb-6 pt-6";
+  const cardPadY = compact ? "py-6" : "py-14";
+  const cardGap = compact ? "gap-2" : "gap-5";
+  const nameSize = compact ? "text-3xl sm:text-4xl" : "text-4xl sm:text-5xl";
+  const btnH = compact ? "h-12" : "h-16";
+  const btnGridMt = compact ? "mt-3" : "mt-6";
+  const timerSize = compact ? "text-2xl" : "text-4xl";
+  const cardWrapMt = compact ? "mt-3" : "mt-8";
+
   return (
-    <div className="mx-auto flex h-full min-h-full max-w-md flex-col px-5 pb-6 pt-6">
+    <div className={`mx-auto flex h-full min-h-full max-w-md flex-col ${rootPad}`}>
       {/* top row */}
       <div className="flex items-center justify-between">
         <div className={`flex items-baseline gap-1.5 ${warn ? "text-destructive" : "text-foreground"}`}>
-          <span className="display text-4xl font-semibold tabular-nums">{timerNum}</span>
+          <span className={`display ${timerSize} font-semibold tabular-nums`}>{timerNum}</span>
           <span className="text-xs uppercase tracking-widest text-muted-foreground">{t("sec")}</span>
         </div>
         <div className="flex items-baseline gap-1.5">
-          <span className="display text-4xl font-semibold tabular-nums text-primary">{correctCount}</span>
+          <span className={`display ${timerSize} font-semibold tabular-nums text-primary`}>{correctCount}</span>
           <span className="text-xs uppercase tracking-widest text-muted-foreground">score</span>
         </div>
       </div>
 
       {/* progress */}
       {!isUnlimited ? (
-        <div className="mt-4 h-1.5 w-full overflow-hidden rounded-full bg-surface/70">
+        <div className={`${compact ? "mt-2" : "mt-4"} h-1.5 w-full overflow-hidden rounded-full bg-surface/70`}>
           <div
             className="h-full rounded-full transition-all duration-300"
             style={{
@@ -717,14 +730,14 @@ function PlayScreen({
           />
         </div>
       ) : (
-        <div className="h-8" />
+        <div className={compact ? "h-3" : "h-8"} />
       )}
 
       {/* name card */}
-      <div className="mt-8 flex flex-1 items-center justify-center">
+      <div className={`${cardWrapMt} flex flex-1 items-center justify-center`}>
         <div
           key={current.name}
-          className="card-in card-glass relative flex w-full flex-col items-center justify-center gap-5 rounded-3xl px-6 py-14 text-center"
+          className={`card-in card-glass relative flex w-full flex-col items-center justify-center ${cardGap} rounded-3xl px-6 ${cardPadY} text-center`}
           style={{ boxShadow: `0 30px 80px -20px ${meta.color}30, 0 0 0 1px ${meta.color}22` }}
         >
           <span
@@ -737,44 +750,48 @@ function PlayScreen({
           >
             {meta.emoji} {catLabel(current.cat)}
           </span>
-          <h2 className="display text-balance text-4xl font-semibold leading-tight sm:text-5xl">
+          <h2 className={`display text-balance ${nameSize} font-semibold leading-tight`}>
             {current.name}
           </h2>
         </div>
       </div>
 
       {/* buttons */}
-      <div className="mt-6 grid grid-cols-2 gap-3">
+      <div className={`${btnGridMt} grid grid-cols-2 gap-3`}>
         <button
           onClick={onSkip}
-          className="h-16 rounded-2xl border border-border bg-surface/70 text-base font-semibold text-foreground/90 backdrop-blur transition active:scale-95"
+          className={`${btnH} rounded-2xl border border-border bg-surface/70 text-base font-semibold text-foreground/90 backdrop-blur transition active:scale-95`}
         >
           <span className="mr-1.5">↺</span>
           {t("reroll")}
         </button>
         <button
           onClick={onCorrect}
-          className="btn-primary h-16 rounded-2xl text-base font-semibold"
+          className={`btn-primary ${btnH} rounded-2xl text-base font-semibold`}
         >
           <span className="mr-1.5">✓</span>
           {t("gotIt")}
         </button>
       </div>
 
-      <p className="mt-3 text-center text-[11px] leading-relaxed text-muted-foreground/70">
-        {tiltState === "granted"
-          ? t("tiltHint")
-          : tiltState === "denied"
-            ? t("tiltDenied")
-            : tiltState === "unsupported"
-              ? t("tiltUnsupported")
-              : t("tiltPending")}
-      </p>
+      {tiltMode && (
+        <p className={`${compact ? "mt-1.5" : "mt-3"} text-center text-[11px] leading-relaxed text-muted-foreground/70`}>
+          {armingHint
+            ? armingHint
+            : tiltState === "granted"
+              ? t("tiltHint")
+              : tiltState === "denied"
+                ? t("tiltDenied")
+                : tiltState === "unsupported"
+                  ? t("tiltUnsupported")
+                  : t("tiltPending")}
+        </p>
+      )}
 
       {isUnlimited && (
         <button
           onClick={onEnd}
-          className="mt-3 text-center text-xs text-muted-foreground underline-offset-4 hover:underline"
+          className={`${compact ? "mt-1" : "mt-3"} text-center text-xs text-muted-foreground underline-offset-4 hover:underline`}
         >
           {t("endRound")}
         </button>
