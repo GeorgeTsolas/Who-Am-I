@@ -1,53 +1,53 @@
-# Tilt-to-answer (correct / skip)
+## Στόχος
 
-Το tilt δεν λειτουργεί γιατί δεν έχει υλοποιηθεί — μόνο το κείμενο-οδηγία υπάρχει. Είναι εφικτό στο web, με δύο σημαντικά caveats:
+Κάθε push στο `main` του GitHub repo σου να χτίζει αυτόματα την εφαρμογή και να την ανεβάζει στο GitHub Pages, ώστε να έχεις live URL:
 
-- **iOS Safari**: απαιτεί explicit permission με `DeviceOrientationEvent.requestPermission()` και μόνο μετά από user gesture (tap).
-- **HTTPS**: το device orientation API δουλεύει μόνο σε secure context. Στο Lovable preview/published είμαστε ήδη σε HTTPS, οπότε ok.
+```
+https://georgetsolas.github.io/Who-Am-I/
+https://georgetsolas.github.io/Who-Am-I/privacy   ← για το Play Store
+```
 
-## Πώς θα δουλεύει
+Το project είναι sync-αρισμένο με το GitHub σου, οπότε ό,τι αλλαγές κάνω εδώ θα πάνε αυτόματα push στο repo και θα ενεργοποιήσουν το workflow.
 
-Στο "Playing" screen το τηλέφωνο κρατιέται landscape στο μέτωπο (οθόνη προς φίλους). Χρησιμοποιούμε το `beta` (front-back tilt) για να ανιχνεύσουμε:
+## Τι θα φτιάξω
 
-- **Tilt DOWN** (κορυφή προς τα κάτω) → Correct (πράσινο flash + επόμενο)
-- **Tilt UP** (κορυφή προς τα πάνω) → Skip (κόκκινο flash + επόμενο)
-- **Neutral zone** στη μέση για να μη κάνει mis-trigger
+**1) Nitro static build**
+Το TanStack Start είναι φτιαγμένο για Cloudflare Workers (SSR). Το GitHub Pages όμως σερβίρει μόνο static αρχεία. Αλλάζω τον nitro preset σε `static` και ενεργοποιώ prerender για τα δύο routes (`/`, `/privacy`) — δουλεύει γιατί το app είναι 100% client-side (καμία server function, καμία DB).
 
-State machine ανά κάρτα: `neutral` → `tilted` → πρέπει να επιστρέψει στο `neutral` πριν καταγραφεί νέα απάντηση (αλλιώς spam triggers).
+**2) Base path για subpath hosting**
+Το site θα ζει κάτω από `/Who-Am-I/`, οπότε:
+- Vite `base: '/Who-Am-I/'` (μόνο σε production build)
+- Router `basepath: '/Who-Am-I/'`
+- `404.html` fallback ώστε τα deep links (π.χ. refresh στο `/privacy`) να μη σκάνε
 
-## Ready screen: iOS permission
+**3) GitHub Actions workflow** (`.github/workflows/deploy.yml`)
+Τρέχει σε κάθε push στο `main`:
+- `bun install`
+- `bun run build`
+- Upload του output → `actions/deploy-pages`
 
-Στο "Get ready — tap to start" tap:
-1. Αν `typeof DeviceOrientationEvent.requestPermission === 'function'` → κάνε το request. Αν denied, το game παίζει κανονικά αλλά μόνο με τα κουμπιά (fallback).
-2. Αλλιώς (Android/desktop) → attach listener κατευθείαν.
+**4) GitHub Pages source setting** ⚠️
+Αυτό είναι το ΜΟΝΟ που πρέπει να αλλάξεις εσύ χειροκίνητα (μια φορά):
+Στο ίδιο screen που έστειλες, στο **Source** → άλλαξέ το από **"Deploy from a branch"** σε **"GitHub Actions"**. Θα σου το πω ξανά όταν κάνουμε build.
 
-Έτσι το permission ζητιέται μία φορά στο σωστό user gesture.
+## Παραδοτέα
 
-## Thresholds (landscape)
+- Live URL: `https://georgetsolas.github.io/Who-Am-I/`
+- Privacy URL (για Play Console): `https://georgetsolas.github.io/Who-Am-I/privacy`
+- Auto-deploy σε κάθε push
+- Το Lovable preview συνεχίζει να δουλεύει κανονικά
 
-Το τηλέφωνο είναι landscape στο μέτωπο, οπότε στην πράξη χρησιμοποιούμε συνδυασμό `beta`/`gamma` ανάλογα με το `window.screen.orientation.angle`:
+## Τεχνικές λεπτομέρειες
 
-- neutral: |angle| < ~25°
-- trigger correct: angle > ~55°
-- trigger skip: angle < -55°
-- reset στο neutral με hysteresis (~35°) για σταθερότητα
+- Αλλαγή σε `vite.config.ts`: nitro preset `static` με prerender routes `['/', '/privacy']`, `base` conditional.
+- Αλλαγή σε `src/router.tsx`: `basepath: import.meta.env.BASE_URL`.
+- Νέο `.github/workflows/deploy.yml` με permissions για Pages + oidc.
+- Νέο `public/404.html` (copy του `index.html`) για SPA fallback.
+- Έλεγχος build τοπικά πριν σου δώσω πράσινο φως.
 
-## Τι δεν αλλάζει
+## Ρίσκα
 
-- Τα κουμπιά "Got it" / "Skip" παραμένουν πάντα διαθέσιμα ως fallback (χρήσιμο σε desktop preview, σε συσκευές που αρνούνται permission, ή αν κάποιος προτιμά).
-- Το υπάρχον game logic (timer, score, flashes) δεν πειράζεται — απλώς το tilt καλεί τα ίδια handlers.
+- Αν το nitro static preset δεν prerender-άρει σωστά το `__root` shell, θα κάνω fallback σε καθαρό Vite SPA build (μικρή τροποποίηση). Θα το επιβεβαιώσω με τοπικό build πριν σου πω ότι είναι έτοιμο.
+- Αν αλλάξεις το repo name από `Who-Am-I`, το base path πρέπει να αλλάξει και αυτό.
 
-## Τεχνική υλοποίηση
-
-- Νέο hook `src/hooks/use-tilt-controls.ts`:
-  - args: `{ enabled: boolean, onCorrect, onSkip }`
-  - επιστρέφει: `{ requestPermission, permissionState: 'granted'|'denied'|'unsupported'|'pending' }`
-  - Εσωτερικά κρατά `useRef` για την τρέχουσα φάση (neutral/awaiting-reset) και για throttling.
-- Στο `src/routes/index.tsx`:
-  - Στο Ready screen tap handler → `await requestPermission()` πριν το `setPhase('playing')`.
-  - Στο Playing phase → `useTiltControls({ enabled: phase === 'playing' && !paused, onCorrect: handleCorrect, onSkip: handleSkip })`.
-  - Μικρό ένδειξη κάτω από τα κουμπιά: "Tilt down = correct · Tilt up = skip" (localized), και σε permission `denied` δείχνουμε subtle hint "Χρησιμοποίησε τα κουμπιά".
-
-## Δυσκολία
-
-Μικρή προς μέτρια — ο κώδικας είναι ~80 γραμμές. Το πιο tricky είναι το iOS permission gate και το να μην κάνει διπλό trigger. Έχω επιλέξει hysteresis + await-reset για αυτό.
+Πες μου OK και ξεκινάω.
