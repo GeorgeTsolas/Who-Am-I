@@ -23,8 +23,9 @@ export function useTiltControls({ enabled, onCorrect, onSkip }: Options) {
   const handlersRef = useRef({ onCorrect, onSkip });
   handlersRef.current = { onCorrect, onSkip };
 
-  const TRIGGER = 45; // degrees from baseline to fire
-  const RESET = 20; // must return within this to allow the next fire
+  const TRIGGER = 65; // degrees from baseline to fire
+  const RESET = 25; // must return within this to allow the next fire
+  const AXIS_LOCK = 25; // initial deflection needed to lock the axis
 
   const handler = useCallback((e: DeviceOrientationEvent) => {
     if (e.beta == null || e.gamma == null) return;
