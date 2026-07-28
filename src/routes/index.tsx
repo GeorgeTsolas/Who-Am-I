@@ -94,6 +94,11 @@ function WhoAmI() {
       localStorage.setItem(CUSTOM_KEY, JSON.stringify(customs));
     } catch {}
   }, [customs]);
+  useEffect(() => {
+    try {
+      localStorage.setItem(TILT_KEY, tiltMode ? "1" : "0");
+    } catch {}
+  }, [tiltMode]);
 
   // Close lang menu on outside click
   useEffect(() => {
