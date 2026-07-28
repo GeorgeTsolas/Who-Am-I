@@ -248,19 +248,21 @@ function WhoAmI() {
       )}
 
       {screen === "playing" && current && (
-        <PlayScreen
-          t={t}
-          catLabel={catLabel}
-          current={current}
-          timeLeft={timeLeft}
-          elapsed={elapsed}
-          duration={duration}
-          correctCount={correct.length}
-          onCorrect={handleCorrect}
-          onSkip={handleSkip}
-          onEnd={() => setScreen("results")}
-          tiltState={permissionState}
-        />
+        <LandscapeStage>
+          <PlayScreen
+            t={t}
+            catLabel={catLabel}
+            current={current}
+            timeLeft={timeLeft}
+            elapsed={elapsed}
+            duration={duration}
+            correctCount={correct.length}
+            onCorrect={handleCorrect}
+            onSkip={handleSkip}
+            onEnd={() => setScreen("results")}
+            tiltState={permissionState}
+          />
+        </LandscapeStage>
       )}
 
       {screen === "results" && (
@@ -540,7 +542,58 @@ function ReadyScreen({
   );
 }
 
+/* ---------- LANDSCAPE STAGE ---------- */
+
+function useIsPortrait() {
+  const [portrait, setPortrait] = useState(() =>
+    typeof window !== "undefined" ? window.innerHeight > window.innerWidth : false,
+  );
+  useEffect(() => {
+    const on = () => setPortrait(window.innerHeight > window.innerWidth);
+    window.addEventListener("resize", on);
+    window.addEventListener("orientationchange", on);
+    return () => {
+      window.removeEventListener("resize", on);
+      window.removeEventListener("orientationchange", on);
+    };
+  }, []);
+  return portrait;
+}
+
+function LandscapeStage({ children }: { children: React.ReactNode }) {
+  const portrait = useIsPortrait();
+
+  // Try to lock native landscape (Android/Chrome); silently ignored on iOS.
+  useEffect(() => {
+    const scr = window.screen as unknown as {
+      orientation?: { lock?: (o: string) => Promise<void>; unlock?: () => void };
+    };
+    scr.orientation?.lock?.("landscape").catch(() => {});
+    return () => {
+      scr.orientation?.unlock?.();
+    };
+  }, []);
+
+  if (!portrait) return <div className="min-h-dvh">{children}</div>;
+  return (
+    <div className="fixed inset-0 overflow-hidden">
+      <div
+        className="absolute left-1/2 top-1/2"
+        style={{
+          width: "100dvh",
+          height: "100dvw",
+          transform: "translate(-50%, -50%) rotate(90deg)",
+          transformOrigin: "center center",
+        }}
+      >
+        {children}
+      </div>
+    </div>
+  );
+}
+
 /* ---------- PLAY ---------- */
+
 
 function PlayScreen({
   t, catLabel, current, timeLeft, elapsed, duration, correctCount, onCorrect, onSkip, onEnd, tiltState,
@@ -564,7 +617,7 @@ function PlayScreen({
   const warn = !isUnlimited && timeLeft <= 10;
 
   return (
-    <div className="mx-auto flex min-h-dvh max-w-md flex-col px-5 pb-6 pt-6">
+    <div className="mx-auto flex h-full min-h-full max-w-md flex-col px-5 pb-6 pt-6">
       {/* top row */}
       <div className="flex items-center justify-between">
         <div className={`flex items-baseline gap-1.5 ${warn ? "text-destructive" : "text-foreground"}`}>

@@ -23,8 +23,9 @@ export function useTiltControls({ enabled, onCorrect, onSkip }: Options) {
   const handlersRef = useRef({ onCorrect, onSkip });
   handlersRef.current = { onCorrect, onSkip };
 
-  const TRIGGER = 45; // degrees from baseline to fire
-  const RESET = 20; // must return within this to allow the next fire
+  const TRIGGER = 65; // degrees from baseline to fire
+  const RESET = 25; // must return within this to allow the next fire
+  const AXIS_LOCK = 25; // initial deflection needed to lock the axis
 
   const handler = useCallback((e: DeviceOrientationEvent) => {
     if (e.beta == null || e.gamma == null) return;
@@ -41,8 +42,8 @@ export function useTiltControls({ enabled, onCorrect, onSkip }: Options) {
     // Lock the axis to whichever moved first past a small threshold, so
     // portrait uses beta and landscape uses gamma automatically.
     if (!axisRef.current) {
-      if (Math.abs(dBeta) > 12) axisRef.current = "beta";
-      else if (Math.abs(dGamma) > 12) axisRef.current = "gamma";
+      if (Math.abs(dBeta) > AXIS_LOCK) axisRef.current = "beta";
+      else if (Math.abs(dGamma) > AXIS_LOCK) axisRef.current = "gamma";
       else return;
     }
 
