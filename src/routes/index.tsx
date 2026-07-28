@@ -78,6 +78,8 @@ function WhoAmI() {
       }
       const rawCustom = localStorage.getItem(CUSTOM_KEY);
       if (rawCustom) setCustoms(JSON.parse(rawCustom));
+      const rawTilt = localStorage.getItem(TILT_KEY);
+      if (rawTilt != null) setTiltMode(rawTilt === "1");
     } catch {}
   }, []);
 
