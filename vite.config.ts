@@ -25,6 +25,8 @@ export default defineConfig({
   },
   ...(isGithubPages
     ? {
+        // Cast: the wrapper's public type only exposes `preset`, but at runtime
+        // all fields are forwarded to nitro(). Static preset + prerender routes.
         nitro: {
           preset: "static",
           prerender: {
@@ -33,7 +35,7 @@ export default defineConfig({
             failOnError: false,
           },
           baseURL: ghBase,
-        },
+        } as unknown as { preset?: string },
         vite: {
           base: ghBase,
         },
