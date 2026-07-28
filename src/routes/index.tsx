@@ -162,14 +162,6 @@ function WhoAmI() {
     return () => window.clearInterval(id);
   }, [screen, duration]);
 
-  const drawNext = (updater: (d: Person[]) => Person[]) => {
-    setDeck((d) => {
-      const nd = updater(d);
-      const [next, ...rest] = nd.length > 0 ? nd : shuffle(pool);
-      setCurrent(next ?? null);
-      return rest;
-    });
-  };
 
   const handleCorrect = useCallback(() => {
     setCurrent((cur) => {
