@@ -135,8 +135,10 @@ function PrivacyPage() {
             Contact
           </h2>
           <p className="mt-2">
-            Questions about this policy? Open an issue on the project's GitHub
-            repository or contact the app owner listed on the store page.
+            <strong>Who Am I?</strong> is developed and published by{" "}
+            <strong>GeoloApps</strong>. Questions about this policy? Open an
+            issue on the project's GitHub repository or contact the developer
+            listed on the store page.
           </p>
         </section>
       </div>
