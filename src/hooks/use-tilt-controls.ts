@@ -109,11 +109,11 @@ export function useTiltControls({ enabled, onCorrect, onSkip }: Options) {
     if (smoothed > trigger) {
       lastTriggerAtRef.current = now;
       stateRef.current = "awaiting-reset";
-      handlersRef.current.onCorrect();
+      handlersRef.current.onSkip();
     } else if (smoothed < -trigger) {
       lastTriggerAtRef.current = now;
       stateRef.current = "awaiting-reset";
-      handlersRef.current.onSkip();
+      handlersRef.current.onCorrect();
     }
   }, []);
 
