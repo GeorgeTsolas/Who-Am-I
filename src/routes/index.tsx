@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { PEOPLE, type Category, type Person } from "@/data/people";
 import { CATEGORY_META, LANG_OPTIONS, TRANSLATIONS, type LangCode } from "@/data/game";
+import { useTiltControls } from "@/hooks/use-tilt-controls";
 
 export const Route = createFileRoute("/")({
   component: WhoAmI,
@@ -161,29 +162,42 @@ function WhoAmI() {
     return () => window.clearInterval(id);
   }, [screen, duration]);
 
-  const drawNext = (updater: (d: Person[]) => Person[]) => {
-    setDeck((d) => {
-      const nd = updater(d);
-      const [next, ...rest] = nd.length > 0 ? nd : shuffle(pool);
-      setCurrent(next ?? null);
-      return rest;
-    });
-  };
 
-  const handleCorrect = () => {
-    if (!current) return;
-    setFlash("correct");
-    setCorrect((c) => [...c, current]);
-    drawNext((d) => d);
-    window.setTimeout(() => setFlash(null), 450);
-  };
-  const handleSkip = () => {
-    if (!current) return;
-    setFlash("skip");
-    setSkips((s) => [...s, current]);
-    drawNext((d) => [...d, current]);
-    window.setTimeout(() => setFlash(null), 450);
-  };
+  const handleCorrect = useCallback(() => {
+    setCurrent((cur) => {
+      if (!cur) return cur;
+      setFlash("correct");
+      setCorrect((c) => [...c, cur]);
+      setDeck((d) => {
+        const [next, ...rest] = d.length > 0 ? d : shuffle(pool);
+        setCurrent(next ?? null);
+        return rest;
+      });
+      window.setTimeout(() => setFlash(null), 450);
+      return cur;
+    });
+  }, [pool]);
+  const handleSkip = useCallback(() => {
+    setCurrent((cur) => {
+      if (!cur) return cur;
+      setFlash("skip");
+      setSkips((s) => [...s, cur]);
+      setDeck((d) => {
+        const nd = [...d, cur];
+        const [next, ...rest] = nd.length > 0 ? nd : shuffle(pool);
+        setCurrent(next ?? null);
+        return rest;
+      });
+      window.setTimeout(() => setFlash(null), 450);
+      return cur;
+    });
+  }, [pool]);
+
+  const { permissionState, requestPermission } = useTiltControls({
+    enabled: screen === "playing",
+    onCorrect: handleCorrect,
+    onSkip: handleSkip,
+  });
 
   const currentLangOpt = LANG_OPTIONS.find((o) => o.code === lang) ?? LANG_OPTIONS[0];
 
@@ -222,7 +236,15 @@ function WhoAmI() {
       )}
 
       {screen === "ready" && (
-        <ReadyScreen t={t} duration={duration} onStart={startRound} onBack={() => setScreen("setup")} />
+        <ReadyScreen
+          t={t}
+          duration={duration}
+          onStart={async () => {
+            await requestPermission();
+            startRound();
+          }}
+          onBack={() => setScreen("setup")}
+        />
       )}
 
       {screen === "playing" && current && (
@@ -237,6 +259,7 @@ function WhoAmI() {
           onCorrect={handleCorrect}
           onSkip={handleSkip}
           onEnd={() => setScreen("results")}
+          tiltState={permissionState}
         />
       )}
 
@@ -520,7 +543,7 @@ function ReadyScreen({
 /* ---------- PLAY ---------- */
 
 function PlayScreen({
-  t, catLabel, current, timeLeft, elapsed, duration, correctCount, onCorrect, onSkip, onEnd,
+  t, catLabel, current, timeLeft, elapsed, duration, correctCount, onCorrect, onSkip, onEnd, tiltState,
 }: {
   t: (k: string) => string;
   catLabel: (k: Category) => string;
@@ -532,6 +555,7 @@ function PlayScreen({
   onCorrect: () => void;
   onSkip: () => void;
   onEnd: () => void;
+  tiltState: "pending" | "granted" | "denied" | "unsupported";
 }) {
   const isUnlimited = duration === NO_LIMIT;
   const meta = CATEGORY_META[current.cat];
@@ -610,6 +634,16 @@ function PlayScreen({
           {t("gotIt")}
         </button>
       </div>
+
+      <p className="mt-3 text-center text-[11px] leading-relaxed text-muted-foreground/70">
+        {tiltState === "granted"
+          ? t("tiltHint")
+          : tiltState === "denied"
+            ? t("tiltDenied")
+            : tiltState === "unsupported"
+              ? t("tiltUnsupported")
+              : t("tiltPending")}
+      </p>
 
       {isUnlimited && (
         <button
