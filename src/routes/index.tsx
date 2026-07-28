@@ -635,6 +635,16 @@ function PlayScreen({
         </button>
       </div>
 
+      <p className="mt-3 text-center text-[11px] leading-relaxed text-muted-foreground/70">
+        {tiltState === "granted"
+          ? t("tiltHint")
+          : tiltState === "denied"
+            ? t("tiltDenied")
+            : tiltState === "unsupported"
+              ? t("tiltUnsupported")
+              : t("tiltPending")}
+      </p>
+
       {isUnlimited && (
         <button
           onClick={onEnd}
