@@ -541,15 +541,17 @@ function SetupScreen(props: {
 /* ---------- READY ---------- */
 
 function ReadyScreen({
-  t, duration, onStart, onBack,
+  t, duration, tiltMode, setTiltMode, onStart, onBack,
 }: {
   t: (k: string) => string;
   duration: Duration;
+  tiltMode: boolean;
+  setTiltMode: (v: boolean) => void;
   onStart: () => void;
   onBack: () => void;
 }) {
   return (
-    <div className="mx-auto flex min-h-dvh max-w-md flex-col items-center justify-center px-6 text-center">
+    <div className="mx-auto flex min-h-dvh max-w-md flex-col items-center justify-center px-6 py-8 text-center">
       <div className="mb-8 flex gap-1.5">
         {Array.from({ length: 3 }).map((_, i) => (
           <span
@@ -566,9 +568,40 @@ function ReadyScreen({
       <p className="mt-3 max-w-[32ch] text-sm leading-relaxed text-muted-foreground">
         {t("hintPlay")}
       </p>
+
+      {/* Tilt mode toggle */}
+      <div className="card-glass mt-8 w-full p-4 text-left">
+        <div className="flex items-center justify-between gap-3">
+          <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-muted-foreground">
+            {t("tiltMode")}
+          </p>
+          <div className="flex items-center gap-1 rounded-full border border-border bg-surface/60 p-1">
+            <button
+              onClick={() => setTiltMode(true)}
+              className={`rounded-full px-3 py-1 text-xs font-semibold transition ${
+                tiltMode ? "bg-primary text-primary-foreground" : "text-foreground/70"
+              }`}
+            >
+              {t("tiltOn")}
+            </button>
+            <button
+              onClick={() => setTiltMode(false)}
+              className={`rounded-full px-3 py-1 text-xs font-semibold transition ${
+                !tiltMode ? "bg-primary text-primary-foreground" : "text-foreground/70"
+              }`}
+            >
+              {t("tiltOff")}
+            </button>
+          </div>
+        </div>
+        <p className="mt-3 text-xs leading-relaxed text-muted-foreground/85">
+          {tiltMode ? t("tiltModeExplain") : t("noTiltModeExplain")}
+        </p>
+      </div>
+
       <button
         onClick={onStart}
-        className="btn-primary mt-10 h-16 w-full rounded-2xl text-lg font-semibold"
+        className="btn-primary mt-6 h-16 w-full rounded-2xl text-lg font-semibold"
       >
         {t("tapToStart")}
       </button>
