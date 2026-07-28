@@ -183,8 +183,41 @@ function WhoAmI() {
     setFlash("skip");
     setSkips((s) => [...s, current]);
     drawNext((d) => [...d, current]);
-    window.setTimeout(() => setFlash(null), 450);
-  };
+  const handleCorrect = useCallback(() => {
+    setCurrent((cur) => {
+      if (!cur) return cur;
+      setFlash("correct");
+      setCorrect((c) => [...c, cur]);
+      setDeck((d) => {
+        const [next, ...rest] = d.length > 0 ? d : shuffle(pool);
+        setCurrent(next ?? null);
+        return rest;
+      });
+      window.setTimeout(() => setFlash(null), 450);
+      return cur;
+    });
+  }, [pool]);
+  const handleSkip = useCallback(() => {
+    setCurrent((cur) => {
+      if (!cur) return cur;
+      setFlash("skip");
+      setSkips((s) => [...s, cur]);
+      setDeck((d) => {
+        const nd = [...d, cur];
+        const [next, ...rest] = nd.length > 0 ? nd : shuffle(pool);
+        setCurrent(next ?? null);
+        return rest;
+      });
+      window.setTimeout(() => setFlash(null), 450);
+      return cur;
+    });
+  }, [pool]);
+
+  const { permissionState, requestPermission } = useTiltControls({
+    enabled: screen === "playing",
+    onCorrect: handleCorrect,
+    onSkip: handleSkip,
+  });
 
   const currentLangOpt = LANG_OPTIONS.find((o) => o.code === lang) ?? LANG_OPTIONS[0];
 
