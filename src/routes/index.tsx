@@ -100,6 +100,16 @@ function WhoAmI() {
     } catch {}
   }, [tiltMode]);
 
+  // If tilt mode is off (or we are not actively playing with tilt), make sure
+  // any previous native landscape lock is released so the device can rotate normally.
+  useEffect(() => {
+    if (tiltMode && screen === "playing") return;
+    const scr = window.screen as unknown as {
+      orientation?: { unlock?: () => void };
+    };
+    scr.orientation?.unlock?.();
+  }, [screen, tiltMode]);
+
   // Close lang menu on outside click
   useEffect(() => {
     if (!langOpen) return;
@@ -281,6 +291,7 @@ function WhoAmI() {
               tiltMode={tiltMode}
               armingHint={!tiltArmed ? t("tiltArming") : null}
               compact
+              forcedLandscape
             />
           </LandscapeStage>
         ) : (
@@ -300,6 +311,7 @@ function WhoAmI() {
               tiltMode={tiltMode}
               armingHint={null}
               compact={false}
+              forcedLandscape={false}
             />
           </div>
         )
@@ -669,7 +681,7 @@ function LandscapeStage({ children }: { children: React.ReactNode }) {
 
 
 function PlayScreen({
-  t, catLabel, current, timeLeft, elapsed, duration, correctCount, onCorrect, onSkip, onEnd, tiltState, tiltMode, armingHint, compact,
+  t, catLabel, current, timeLeft, elapsed, duration, correctCount, onCorrect, onSkip, onEnd, tiltState, tiltMode, armingHint, compact, forcedLandscape,
 }: {
   t: (k: string) => string;
   catLabel: (k: Category) => string;
@@ -685,6 +697,7 @@ function PlayScreen({
   tiltMode: boolean;
   armingHint: string | null;
   compact: boolean;
+  forcedLandscape: boolean;
 }) {
   const isUnlimited = duration === NO_LIMIT;
   const meta = CATEGORY_META[current.cat];
@@ -703,7 +716,7 @@ function PlayScreen({
   const cardWrapMt = compact ? "mt-3" : "mt-8";
 
   return (
-    <div className={`mx-auto flex h-full min-h-full max-w-md flex-col ${rootPad}`}>
+    <div className={`mx-auto flex h-full min-h-full flex-col ${forcedLandscape ? "max-w-[min(100dvw,860px)]" : "max-w-md landscape:max-w-4xl"} ${rootPad}`}>
       {/* top row */}
       <div className="flex items-center justify-between">
         <div className={`flex items-baseline gap-1.5 ${warn ? "text-destructive" : "text-foreground"}`}>
