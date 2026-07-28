@@ -248,19 +248,21 @@ function WhoAmI() {
       )}
 
       {screen === "playing" && current && (
-        <PlayScreen
-          t={t}
-          catLabel={catLabel}
-          current={current}
-          timeLeft={timeLeft}
-          elapsed={elapsed}
-          duration={duration}
-          correctCount={correct.length}
-          onCorrect={handleCorrect}
-          onSkip={handleSkip}
-          onEnd={() => setScreen("results")}
-          tiltState={permissionState}
-        />
+        <LandscapeStage>
+          <PlayScreen
+            t={t}
+            catLabel={catLabel}
+            current={current}
+            timeLeft={timeLeft}
+            elapsed={elapsed}
+            duration={duration}
+            correctCount={correct.length}
+            onCorrect={handleCorrect}
+            onSkip={handleSkip}
+            onEnd={() => setScreen("results")}
+            tiltState={permissionState}
+          />
+        </LandscapeStage>
       )}
 
       {screen === "results" && (
