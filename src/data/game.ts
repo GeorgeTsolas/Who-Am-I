@@ -49,6 +49,10 @@ export const TRANSLATIONS: Record<LangCode, Dict> = {
     playAgain: "Play again", changeSettings: "Change settings",
     getReady: "Get ready", tapToStart: "Tap when everyone's ready",
     tiltHint: "Tilt down = correct · Tilt up = skip", tiltDenied: "Motion access denied — use the buttons", tiltUnsupported: "Use the buttons on this device", tiltPending: "Use the buttons or enable motion access",
+    tiltMode: "Tilt mode", tiltOn: "On", tiltOff: "Off",
+    tiltModeExplain: "On: phone locks to landscape on your forehead. Tilt down = correct, up = skip.",
+    noTiltModeExplain: "Off: hold the phone however you like. Use the on-screen buttons to answer.",
+    tiltArming: "Get set…",
   },
   el: {
     catLabel_actors: "Ταινίες & TV", catLabel_music: "Μουσική", catLabel_sports: "Αθλητισμός", catLabel_science: "Επιστήμη",
