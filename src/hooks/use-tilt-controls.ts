@@ -42,8 +42,8 @@ export function useTiltControls({ enabled, onCorrect, onSkip }: Options) {
     // Lock the axis to whichever moved first past a small threshold, so
     // portrait uses beta and landscape uses gamma automatically.
     if (!axisRef.current) {
-      if (Math.abs(dBeta) > 12) axisRef.current = "beta";
-      else if (Math.abs(dGamma) > 12) axisRef.current = "gamma";
+      if (Math.abs(dBeta) > AXIS_LOCK) axisRef.current = "beta";
+      else if (Math.abs(dGamma) > AXIS_LOCK) axisRef.current = "gamma";
       else return;
     }
 
