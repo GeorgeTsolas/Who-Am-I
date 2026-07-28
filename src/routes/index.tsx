@@ -542,7 +542,58 @@ function ReadyScreen({
   );
 }
 
+/* ---------- LANDSCAPE STAGE ---------- */
+
+function useIsPortrait() {
+  const [portrait, setPortrait] = useState(() =>
+    typeof window !== "undefined" ? window.innerHeight > window.innerWidth : false,
+  );
+  useEffect(() => {
+    const on = () => setPortrait(window.innerHeight > window.innerWidth);
+    window.addEventListener("resize", on);
+    window.addEventListener("orientationchange", on);
+    return () => {
+      window.removeEventListener("resize", on);
+      window.removeEventListener("orientationchange", on);
+    };
+  }, []);
+  return portrait;
+}
+
+function LandscapeStage({ children }: { children: React.ReactNode }) {
+  const portrait = useIsPortrait();
+
+  // Try to lock native landscape (Android/Chrome); silently ignored on iOS.
+  useEffect(() => {
+    const scr = window.screen as Screen & {
+      orientation?: { lock?: (o: string) => Promise<void>; unlock?: () => void };
+    };
+    scr.orientation?.lock?.("landscape").catch(() => {});
+    return () => {
+      scr.orientation?.unlock?.();
+    };
+  }, []);
+
+  if (!portrait) return <div className="min-h-dvh">{children}</div>;
+  return (
+    <div className="fixed inset-0 overflow-hidden">
+      <div
+        className="absolute left-1/2 top-1/2"
+        style={{
+          width: "100dvh",
+          height: "100dvw",
+          transform: "translate(-50%, -50%) rotate(90deg)",
+          transformOrigin: "center center",
+        }}
+      >
+        {children}
+      </div>
+    </div>
+  );
+}
+
 /* ---------- PLAY ---------- */
+
 
 function PlayScreen({
   t, catLabel, current, timeLeft, elapsed, duration, correctCount, onCorrect, onSkip, onEnd, tiltState,
