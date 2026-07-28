@@ -19,6 +19,7 @@ export default defineConfig({
     server: { entry: "server" },
     ...(isGithubPages
       ? {
+          router: { basepath: ghBase.replace(/\/$/, "") },
           pages: [{ path: "/" }, { path: "/privacy" }],
         }
       : {}),
